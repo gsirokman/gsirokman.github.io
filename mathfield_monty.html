@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>untitled</title>
+  <script src="https://unpkg.com/mathlive"></script>
+</head>
+
+<body>
+  <math-field id="mf" style="width:400px"></math-field>
+  <!-- 
+  <p>&nbsp;</p>
+  <div>LaTex output: <span id="output"> </span></div>
+  -->
+  <p>
+  <a href="https://cortexjs.io/mathfield/guides/virtual-keyboard#defining-custom-layouts" target="_blank">Cortexjs virtual keyboard documentation</a>
+  </p>
+  <script>
+
+// ===============  Nise ==============
+nise1 = {
+  label: 'Monty set',
+  rows: [
+    [  // row 1
+      { label: '[separator]', width: 0.5 }, 
+      '[7]', '[8]', '[9]', '[/]' ,{ label: '[separator]', width: 0.5 }, 
+      {  latex: '\\ {#@}^{#0}' }, {class:'small', latex: '\\frac{#@}{#0}' },
+    ],
+
+    [ // row 2
+       , { label: '[separator]', width: 0.5 }, 
+       '[4]', '[5]', '[6]', '[*]', { label: '[separator]', width: 0.5 },  
+       {latex:'\\sqrt',insert:'\\sqrt{#0}'}, , 
+    ],
+    [ // row 3
+       '[(]','[)]',  { label: '[separator]', width: 0.5 }, 
+       '[1]', '[2]', '[3]', '[-]',  { label: '[separator]', width: 0.5 },
+       '!', {latex: '\\%'}, {latex:'\\}',insert:'\\}', shift:{latex:'\\{',insert:'\\{'}}
+     // '\\bar{#@}', '\\dot{#@}', { latex: '10^{#0}', insert: '\\times 10^{#0}' }
+
+    ],
+    [ // row 4
+        { label: '[separator]', width: 0.5 }, 
+       '[0]', '[.]', ',', '[+]',{ label: '[separator]', width: 0.5 }, 
+       '[left]', '[right]',{ label: '[backspace]', width: 1 }
+    ],
+  ],
+};
+
+nise2 = {
+  label: 'Nise: <i>&int; dt</i>',
+  rows: [
+    [  // row 1
+      {latex:'\\frac{d^n}{dt^n}', insert:'\\frac{d^{#0}}{dt^{#0}}#0'},{class:'small', latex:'\\int_a^b', insert:'\\int_{#0}^{#0}#0'}, { label: '[separator]', width: 0.5 }, 
+      {latex:'\\mathrm{det}', insert:'\\mathrm{det}(#0)'}, {latex:'\\mathrm{adj}', insert:'\\mathrm{adj}(#0)'}, 
+           {latex:'\\mathbf{M}^{-1}', insert:'(#0)^{-1}', aside:'inverse'}, '\\mathbf{\\Phi}',{ label: '[separator]', width: 0.5 }, 
+      '\\theta', '\\phi','\\gamma' 
+    ],
+
+    [ // row 2
+    {class:'small', latex:'\\sum', insert:'\\sum{#0}'},{class:'small', latex:'\\prod',insert:'\\prod{#0}'}, { label: '[separator]', width: 0.5 }, 
+    '\\mathbf{A}', '\\mathbf{B}', '\\mathbf{C}', '\\mathbf{D}' ,{ label: '[separator]', width: 0.5 }, 
+      '\\omega','\\zeta', '\\lambda'
+    ],
+    [ // row 3
+    {latex:'\\mathscr{L~~~~}', insert:'\\mathscr{L}{#0}',shift:{latex:'\\mathscr{L}^{-1}', insert:'\\mathscr{L}^{-1}{#0}'}},
+       {latex:'\\mathcal{Z}~~~~', insert:'\\mathcal{Z}{#0}',shift:{latex:'\\mathcal{Z}^{-1}', insert:'\\mathcal{Z}^{-1}{#0}'}},{ label: '[separator]', width: 0.5 }, 
+       {latex:'\\lim', insert:'\\lim_{#0}{#0}'}, '\\rightarrow', '\\infty' , '0',{ label: '[separator]', width: 0.5 }, 
+     '\\alpha', '\\beta', '[separator]'
+     // '\\bar{#@}', '\\dot{#@}', { latex: '10^{#0}', insert: '\\times 10^{#0}' }
+
+    ],
+    [ // row 4
+    '\\delta',  '\\Delta', { label: '[separator]', width: 0.5 }, 
+    '|#0|', {latex: '\\ {#@}_{#0}' }, {  latex: '\\ {#@}^{#0}' }, {class:'small', latex: '\\frac{#@}{#0}' }, ,{ label: '[separator]', width: 0.5 }, 
+      '[left]', '[right]',{ label: '[backspace]', width: 1 }
+     // '\\bar{#@}', '\\dot{#@}', { latex: '10^{#0}', insert: '\\times 10^{#0}' }
+
+    ]
+  ],
+}
+
+
+
+// ===============  Moran ==============
+monty1 = {  
+  label: 'Monty base',
+  rows: [
+    [  // row 1
+      '[7]', '[8]', '[9]', '[/]' ,{ label: '[separator]', width: 0.5 }, 
+      {latex:'{#@}^\\prime', shift:'\\hat{#@}'},  {class:'small', latex: '{#@}^{#0}_{#0}'},  {latex:'|', shift:{latex:'|#0|'}},
+      {latex:'\\lt',insert:'\\lt', shift:{latex:'\\leq',insert:'\\leq'}},{latex:'\\gt',insert:'\\gt', shift:{latex:'\\geq',insert:'\\geq'}},
+      {latex:'!', shift:{latex:'\\%'}}
+    ],
+
+    [ // row 2
+       '[4]', '[5]', '[6]', '[*]', { label: '[separator]', width: 0.5 },  
+        {latex: '\\ {#@}_{#0}', shift:'\\ {#@}^{#0}'}, {latex:'\\cdot', aside:'center dot'}, {class:'small', latex:'\\sqrt{#0}~~', shift:{class:'small', latex:'\\sqrt[#0]{#0}'}},
+        {latex:'(', shift:{latex:'['}},{latex:')', shift:{latex:']'}}, {class:'small', latex:'\\sum_{#0}^{#0}', insert:'\\sum_{#0}^{#0}'}
+    ],
+    [ // row 3
+       '[1]', '[2]', '[3]', '[-]',  { label: '[separator]', width: 0.5 },
+       {latex:'\\bar{#@}', shift:'\\bar{\\bar{#@}}'}, {class:'small', latex:'\\text{ln}#@', shift:{latex: 'e^{#0}', insert: '\\times e^{#0}' }}, {class:'small', latex:'\\text{log}#@~~', 
+       shift:{latex: '10^{#0}', insert: '\\times 10^{#0}' }},
+       {latex:'\\{', shift:{latex:'\\}'}},{class:'small', latex:'\\int_{#0}^{#0}'}, {latex:'d', shift:{latex:'\\partial'}}
+    ],
+    [ // row 4 
+       '[0]', '[.]', '[=]', '[+]',{ label: '[separator]', width: 1 },{ label: '[separator]', width: 1 },{ label: '[separator]', width: 0.5 }, 
+       {latex:'\\pm', shift:{latex:'\\infty',}}, '[left]', '[right]',{ label: '[backspace]', width: 1 }
+    ],
+  ],
+};
+
+// Moran's 2nd keyboard
+// This keyboard allows use of custome styling.  The .xsmall 
+monty2 = {
+  label: 'Monty symbols',
+  rows: [
+    [  // row 1
+     {latex:'\\alpha',insert:'\\alpha', aside:'alpha', shift:{latex:'A',insert:'A'}} ,{latex:'\\beta',insert:'\\beta', aside:'beta', shift:{latex:'B',insert:'B'}},
+     {latex:'\\gamma',insert:'\\gamma', aside:'gamma', shift:{latex:'\\Gamma',insert:'\\Gamma'}}, {latex:'\\delta',insert:'\\delta',aside:'delta', shift:{latex:'\\Delta',insert:'\\Delta'}},
+     { label: '[separator]', width: 2 }, 
+     {class:'small', latex: '\\ \\left( \\begin{matrix} #0 \\\\ #0 \\end{matrix} \\right)' },'\\cup','\\cap'
+    ],
+    [  // row 2
+     {latex:'\\epsilon',insert:'\\epsilon', aside:'epsilon', shift:{latex:'E',insert:'E'}},
+     {latex:'\\eta',insert:'\\eta', aside:'eta', shift:{latex:'H',insert:'H'}}, {latex:'\\theta',insert:'\\theta', aside:'theta', shift:{latex:'\\Theta',insert:'\\Theta'}}, 
+     {latex:'\\lambda',insert:'\\lambda', aside:'lambda', shift:{latex:'\\Lambda',insert:'\\lambda'}},
+     { label: '[separator]', width: 2 }, 
+     '\\notin', {latex:'P_{r}^{n}',insert:'P_{#0}^{#0}'},
+     {latex:'C_r^n',insert:'C_{#0}^{#0}'}
+    ],
+    [ // row 3  // can't get the spacing correct, this is close
+     {latex:'\\mu',insert:'\\mu', aside:'mu', shift:{latex:'M',insert:'M'}},
+     {latex:'\\nu',insert:'\\nu', aside:'nu', shift:{latex:'N',insert:'N'}}, {latex:'\\tau',insert:'\\tau', aside:'tau', shift:{latex:'T',insert:'T'}},
+     {latex:'\\pi',insert:'\\pi', aside:'pi', shift:{latex:'\\Pi',insert:'\\Pi'}},
+     {label: '[separator]', width: 2}, {latex:'^\\varnothing', aside:'null set'}, '\\in', '\\ni'
+       
+    ],
+    [ // row 4  // can't get the spacing correct, this is close
+     {latex:'\\rho',insert:'\\rho', aside:'rho', shift:{latex:'P',insert:'P'}},
+     {latex:'\\sigma',insert:'\\sigma', aside:'sigma', shift:{latex:'\\Sigma',insert:'\\Sigma'}}, {latex:'\\phi',insert:'\\phi', aside:'phi', shift:{latex:'\\Phi',insert:'\\Phi'}},
+     {latex:'\\chi',insert:'\\chi', aside:'chi', shift:{latex:'X',insert:'X'}}, {latex:'\\varepsilon',insert:'\\varepsilon', aside:'epsilon (alt.)'}, {label: '[separator]', width: 1},
+     '[left]', '[right]',{ label: '[backspace]', width: 1 }
+    ]
+  ],
+
+}
+
+
+// ============= Other examples ================
+
+// other examples that may be useful
+basic = {
+  label: 'Basic',
+  rows: [
+    [  // row 1
+      '[7]', '[8]', '[9]', '[+]',   // enclosing in [ ]  gives special properties with the shift.  See  https://cortexjs.io/mathfield/guides/virtual-keyboard#keycap-shortcuts
+      { label: '[separator]', width: 0.5 },
+      { latex: '\\frac{#@}{#0}' },  {  latex: '\\ {#@}_{#0}' },  // fraction and substript examples  See https://cortexjs.io/mathfield/guides/virtual-keyboard#placeholder-tokens
+      '\\varnothing', '\\infty', '\\in', 
+      '[separator]',
+    ],
+    [ // row 2
+      '[4]', '[5]', '[6]', '[-]', 
+      { label: '[separator]', width: 0.5 },  // a 1/2 key width space
+      '[(]', '[)]', '\\lt', '\\le', { label: '[shift]', width: 2 },  // double width Shift key 
+    ],
+    [ // row 3
+      '[1]', '[2]', '[3]', '\\cdot', 
+      { label: '[separator]', width: 0.5 },
+      '[', ']', '\\gt', '\\ge',
+      { label: '[backspace]', width: 2 },
+    ],
+    [ // row 4
+      { label: '[0]', width: 2 }, '[.]', '\\colon', 
+      { label: '[separator]', width: 0.5 },
+      {latex:'A', shift: '\\mathbf{A}'} ,   // shift key options
+      { latex: "a", variants: ["A", "\\mathbf{a}", "\\alpha", "\\Alpha"],aside:"A, α" },  // variants if you hold down the key
+      '=', '\\ne', '[left]', '[right]',  //  variants (press and hold)
+    ],
+  ],
+};
+
+// other layouts
+mylayout1 = 
+{
+  label: 'Layout 1',
+      rows: [
+        [
+          "+", "-", "\\times", "\\frac{#@}{#?}", "=", ".",  "(", ")", "\\sqrt{#0}", "#@^{#?}" ],
+        ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+      ],
+  };
+
+ mylayout2 = 
+{
+  label: 'Layout 2',
+      rows: [
+        [
+          "+", "-", "\\times", "\\frac{#@}{#?}", "=", ".",
+          "(", ")", "\\sqrt{#0}", "#@^{#?}",
+        ],
+        ["1", "2", "[separator]", "\\mathbf{A}", "A", "6", "7", "8", "9", "0"],
+        [{ label: '[separator]', width: 0.5 },'a', { label:'a', shift:'\\mathbf{a}' }, { latex: "a", variants: ["A", "\\alpha", "\\Alpha"] }]
+      ]
+  };
+
+
+// ======= Layouts used in the keyboard ====== 
+mathVirtualKeyboard.layouts = [monty1, monty2]  // layouts as tabs
+
+mf.mathVirtualKeyboardPolicy = "manual";
+mathVirtualKeyboard.show();
+
+    // mf.addEventListener('input', evt => {
+    //   document.getElementById("output").innerHTML = evt.target.value; // console.log('Value:', evt.target.value)
+    //   }
+    // );
+
+  </script>
+</body>
+
+</html>
